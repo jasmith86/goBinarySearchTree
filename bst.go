@@ -22,12 +22,12 @@ type Node struct {
 
 // Add new Node to tree. Returns number of nodes added and error
 func (b *BST) Insert(v int) (int, error) {
-	if b.head == nil { // Insert first/head Node
+	if b.head == nil { // insert first/head Node
 		b.head = &Node{val: v}
 		b.count += 1
 		return 1, nil
 	}
-	err := b.head.Insert(v) // try to Insert Node
+	err := b.head.insert(v) // try to insert Node
 	if err != nil {
 		return 0, err
 	}
@@ -35,23 +35,25 @@ func (b *BST) Insert(v int) (int, error) {
 	return 1, nil
 }
 
-func (n *Node) Insert(v int) error {
+// insert a new node starting at n.
+// TODO this should be a method of BST, not node.
+func (n *Node) insert(v int) error {
 	if v == n.val {
-		return errors.New("failed trying to Insert duplicate value")
+		return errors.New("failed trying to insert duplicate value")
 	}
 	if v < n.val { // Go left
 		if n.left == nil { // can insert value
 			n.left = &Node{val: v}
 			return nil
 		}
-		return n.left.Insert(v)
+		return n.left.insert(v)
 	}
 	// Go right. v must be > n.val
 	if n.right == nil { // can insert value
 		n.right = &Node{val: v}
 		return nil
 	}
-	return n.right.Insert(v)
+	return n.right.insert(v)
 }
 
 func (n *Node) Height(h ...int) int {
