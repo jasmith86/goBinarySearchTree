@@ -69,6 +69,9 @@ func (n *Node) Insert(v int) error {
 
 // get number of nodes from n (inclusive)
 func (n *Node) Count(c ...int) int {
+	if !n.isReady {
+		return 0
+	}
 	count := 1
 	if n.left != nil {
 		count += n.left.Count()
