@@ -14,9 +14,10 @@ import (
 
 // Node of Binary Search Tree
 type Node struct {
-	val   int
-	left  *Node
-	right *Node
+	val     int
+	isReady bool
+	left    *Node
+	right   *Node
 }
 
 //// Add new Node to tree. Returns number of nodes added and error
@@ -34,10 +35,16 @@ type Node struct {
 //	return 1, nil
 //}
 
+// Mark current Node as ready (n.val has been set -- not default value)
+func (n *Node) setVal(v int) {
+	n.val = v
+	n.isReady = true
+}
+
 // Insert a new node starting at n.
 func (n *Node) Insert(v int) error {
-	if n == nil {
-		n.val = v
+	if !n.isReady {
+		n.setVal(v)
 		return nil
 	}
 	if v == n.val {
@@ -45,25 +52,39 @@ func (n *Node) Insert(v int) error {
 	}
 	if v < n.val { // Go left
 		if n.left == nil { // can Insert value
-			n.left = &Node{val: v}
+			n.left = &Node{}
+			n.left.setVal(v)
 			return nil
 		}
 		return n.left.Insert(v)
 	}
 	// Go right. v must be > n.val
 	if n.right == nil { // can Insert value
-		n.right = &Node{val: v}
+		n.right = &Node{}
+		n.right.setVal(v)
 		return nil
 	}
 	return n.right.Insert(v)
 }
 
+// get number of nodes from n (inclusive)
+func (n *Node) Count(c ...int) int {
+	count := 1
+	if n.left != nil {
+		count += n.left.Count()
+	}
+	if n.right != nil {
+		count += n.right.Count()
+	}
+	return count
+}
+
 // get height downwards from Node n
 func (n *Node) Height(h ...int) int {
-	height := 1
 	if n == nil {
 		return 0
 	}
+	height := 1
 	if len(h) == 1 {
 		height = h[0]
 	}
@@ -71,11 +92,14 @@ func (n *Node) Height(h ...int) int {
 }
 
 // Utility max function for integers
-func maxInt(x, y int) int {
-	if x > y {
-		return x
+func maxInt(x ...int) int {
+	max := x[0]
+	for _, v := range x {
+		if v > max {
+			max = v
+		}
 	}
-	return y
+	return max
 }
 
 // Get maximum value from Node n
@@ -86,7 +110,7 @@ func (n *Node) Max() (int, error) {
 	if n.right != nil {
 		return n.right.Max()
 	}
-	return n.val, errors.New("cannot get max of empty tree")
+	return n.val, nil
 }
 
 // Get minimum value from Node n
