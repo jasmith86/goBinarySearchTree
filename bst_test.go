@@ -7,51 +7,57 @@ import (
 func TestBSTInsertSimple(t *testing.T) {
 	tests := []struct {
 		name    string
-		tree    *BST
+		tree    *Node
 		input   []int
-		wantVal int
+		wantErr bool
 	}{
-		{name: "empty root", input: []int{}, wantVal: 0},
-		{name: "single root", input: []int{9}, wantVal: 9},
-		{name: "single root", input: []int{2, 0, 3}, wantVal: 2},
+		{name: "zero nodes", input: []int{}},
+		{name: "one node", input: []int{9}},
+		{name: "add dupe node", input: []int{9, 9}, wantErr: true},
+		{name: "three nodes", input: []int{2, 0, 3}},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			test.tree = &BST{}
-			for _, v := range test.input {
-				if _, err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to insert: %v", err)
+			test.tree = &Node{}
+			for _, v := range test.input { // build the tree
+				err := test.tree.Insert(v)
+				if err != nil { // got an error
+					if !test.wantErr { // but we didn't want an error
+						t.Errorf("got unexpected error: %v. \n%v into %v", err, v, test.tree)
+					}
 				}
 			}
-			if test.tree.count != len(test.input) {
-				t.Errorf("wrong count. want %v, got %v", len(test.input), test.tree.count)
-			}
-			if len(test.input) > 0 {
-				if test.tree.head.val != test.wantVal {
-					t.Errorf("wrong value. want %v, got %v", test.tree.head.val, test.wantVal)
+			if len(test.input) > 0 { // if we added nodes
+				if !test.tree.isReady { // check the root node marked as ready
+					t.Errorf("tree not ready: %+v", test.tree)
+				}
+				if want, got := test.input[0], test.tree.val; want != got { // make sure root node has correct value
+					t.Errorf("wrong value. want %v, got %v. %+v", want, got, test.tree)
 				}
 			}
+
 		})
 	}
 }
 
-func TestBSTInsertWholeTree(t *testing.T) {
-	tree := &BST{}
+// Check tree structure
+func TestBSTInsertCheckCorrectStructure(t *testing.T) {
+	tree := &Node{}
 	input := []int{10, 5, 15, 4, 6, 14, 16}
 
 	for _, v := range input {
-		if _, err := tree.Insert(v); err != nil {
-			t.Errorf("failed to insert: %v", err)
+		if err := tree.Insert(v); err != nil {
+			t.Errorf("failed to Insert: %v", err)
 		}
 	}
 	location := []*Node{
-		tree.head,             // 10
-		tree.head.left,        // 5
-		tree.head.right,       // 15
-		tree.head.left.left,   // 4
-		tree.head.left.right,  // 6
-		tree.head.right.left,  //14
-		tree.head.right.right, // 16
+		tree,             // 10
+		tree.left,        // 5
+		tree.right,       // 15
+		tree.left.left,   // 4
+		tree.left.right,  // 6
+		tree.right.left,  //14
+		tree.right.right, // 16
 	}
 	for i, v := range input {
 		if location[i].val != v {
@@ -60,12 +66,13 @@ func TestBSTInsertWholeTree(t *testing.T) {
 	}
 }
 
-func TestBSTHeight(t *testing.T) {
+func TestBSTHeightCount(t *testing.T) {
 	tests := []struct {
 		name       string
-		tree       *BST
+		tree       *Node
 		input      []int
 		wantHeight int
+		//wantCount  int
 	}{
 		{name: "empty root", input: []int{}, wantHeight: 0},
 		{name: "single node", input: []int{9}, wantHeight: 1},
@@ -77,14 +84,14 @@ func TestBSTHeight(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			test.tree = &BST{}
+			test.tree = &Node{}
 			for _, v := range test.input {
-				if _, err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to insert: %v: %v", v, err)
+				if err := test.tree.Insert(v); err != nil {
+					t.Errorf("failed to Insert: %v: %v", v, err)
 				}
 			}
-			if got := test.tree.head.Height(); got != test.wantHeight {
-				t.Errorf("wrong height. want %v, got %v", test.wantHeight, got)
+			if got := test.tree.Height(); got != test.wantHeight {
+				t.Errorf("wrong height. want %v, got %v in %v", test.wantHeight, got, test.input)
 			}
 		})
 	}
