@@ -126,7 +126,9 @@ func (n *Node) InOrder(prev ...int) []int {
 	if n.left != nil {
 		rv = append(rv, n.left.InOrder()...)
 	}
-	rv = append(rv, n.val)
+	if n.isReady {
+		rv = append(rv, n.val)
+	}
 	if n.right != nil {
 		rv = append(rv, n.right.InOrder()...)
 	}
