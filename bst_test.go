@@ -72,7 +72,6 @@ func TestBSTHeightCount(t *testing.T) {
 		tree       *Node
 		input      []int
 		wantHeight int
-		//wantCount  int
 	}{
 		{name: "empty root", input: []int{}, wantHeight: 0},
 		{name: "single node", input: []int{9}, wantHeight: 1},
@@ -90,8 +89,52 @@ func TestBSTHeightCount(t *testing.T) {
 					t.Errorf("failed to Insert: %v: %v", v, err)
 				}
 			}
+			// Test Height
 			if got := test.tree.Height(); got != test.wantHeight {
 				t.Errorf("wrong height. want %v, got %v in %v", test.wantHeight, got, test.input)
+			}
+			// Test Count
+			if want, got := len(test.input), test.tree.Count(); want != got {
+				t.Errorf("wrong node count. want %v, got %v in %v", want, got, test.input)
+			}
+		})
+	}
+}
+
+func TestBSTMinMax(t *testing.T) {
+	tests := []struct {
+		name        string
+		tree        *Node
+		input       []int
+		expectError bool
+	}{
+		{name: "empty root", input: []int{}, expectError: true},
+		{name: "single node", input: []int{9}},
+		{name: "height 2", input: []int{2, 0, 3}},
+		{name: "height 3", input: []int{3, 2, 1}},
+		{name: "height 3 all left", input: []int{3, 2, 1}},
+		{name: "height 4 all right", input: []int{1, 2, 3, 4}},
+		{name: "height 3 full", input: []int{10, 8, 7, 9, 12, 11, 13}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.tree = &Node{}
+			for _, v := range test.input {
+				if err := test.tree.Insert(v); err != nil {
+					t.Errorf("failed to Insert: %v: %v", v, err)
+				}
+			}
+			// Test Min
+			got, err := test.tree.Min()
+			gotErr := err != nil
+			if test.expectError != gotErr {
+				t.Errorf("error expectation mismatch. got %v from %v", got, test.input)
+			}
+			if len(test.input) > 0 {
+				if want := minInt(test.input...); want != got {
+					t.Errorf("wrong Min(). got %v, want %v, from %v", got, want, test.input)
+
+				}
 			}
 		})
 	}
