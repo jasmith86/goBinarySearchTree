@@ -36,7 +36,6 @@ func (b *BST) Insert(v int) (int, error) {
 }
 
 // insert a new node starting at n.
-// TODO this should be a method of BST, not node.
 func (n *Node) insert(v int) error {
 	if v == n.val {
 		return errors.New("failed trying to insert duplicate value")
@@ -56,6 +55,7 @@ func (n *Node) insert(v int) error {
 	return n.right.insert(v)
 }
 
+// get height downwards from Node n
 func (n *Node) Height(h ...int) int {
 	height := 1
 	if n == nil {
@@ -66,6 +66,8 @@ func (n *Node) Height(h ...int) int {
 	}
 	return height + maxInt(n.left.Height(), n.right.Height())
 }
+
+// Utility max function for integers
 func maxInt(x, y int) int {
 	if x > y {
 		return x
@@ -73,6 +75,7 @@ func maxInt(x, y int) int {
 	return y
 }
 
+// Get maximum value from Node n
 func (n *Node) Max() (int, error) {
 	if n == nil {
 		return 0, errors.New("cannot get max of empty tree")
@@ -83,6 +86,7 @@ func (n *Node) Max() (int, error) {
 	return n.val, errors.New("cannot get max of empty tree")
 }
 
+// Get minimum value from Node n
 func (n *Node) Min() (int, error) {
 	if n == nil {
 		return 0, errors.New("cannot get min of empty tree")
