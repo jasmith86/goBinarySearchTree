@@ -100,7 +100,7 @@ func (n *Node) Height(h ...int) int {
 
 // Get maximum value from Node n
 func (n *Node) Max() (int, error) {
-	if n == nil {
+	if !n.isReady {
 		return 0, errors.New("cannot get max of empty tree")
 	}
 	if n.right != nil {
@@ -111,7 +111,7 @@ func (n *Node) Max() (int, error) {
 
 // Get minimum value from Node n
 func (n *Node) Min() (int, error) {
-	if n == nil {
+	if !n.isReady {
 		return 0, errors.New("cannot get min of empty tree")
 	}
 	if n.left != nil {
