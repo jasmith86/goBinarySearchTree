@@ -29,4 +29,5 @@ func main() {
 	}
 
 	fmt.Println(root.InOrder())
+	fmt.Println(root.Count())
 }
