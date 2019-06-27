@@ -95,3 +95,16 @@ func (n *Node) Min() (int, error) {
 	}
 	return n.val, nil
 }
+
+// Walk from n in order. Returns values in ascending order.
+func (n *Node) InOrder(prev ...int) []int {
+	var rv []int
+	if n.left != nil {
+		rv = append(rv, n.left.InOrder()...)
+	}
+	rv = append(rv, n.val)
+	if n.right != nil {
+		rv = append(rv, n.right.InOrder()...)
+	}
+	return rv
+}

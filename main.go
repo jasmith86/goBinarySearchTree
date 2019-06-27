@@ -27,4 +27,6 @@ func main() {
 	} else {
 		fmt.Println("Min", s)
 	}
+
+	fmt.Println(t.head.InOrder())
 }
