@@ -80,7 +80,7 @@ func TestBSTHeight(t *testing.T) {
 			test.tree = &BST{}
 			for _, v := range test.input {
 				if _, err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to insert: %v", err)
+					t.Errorf("failed to insert: %v: %v", v, err)
 				}
 			}
 			if got := test.tree.head.Height(); got != test.wantHeight {
