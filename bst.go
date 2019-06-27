@@ -81,25 +81,18 @@ func (n *Node) Count(c ...int) int {
 
 // get height downwards from Node n
 func (n *Node) Height(h ...int) int {
-	if n == nil {
+	if !n.isReady {
 		return 0
 	}
-	height := 1
-	if len(h) == 1 {
-		height = h[0]
+	lh, rh := 0, 0
+	if n.left != nil {
+		lh = n.left.Height()
 	}
-	return height + maxInt(n.left.Height(), n.right.Height())
-}
-
-// Utility max function for integers
-func maxInt(x ...int) int {
-	max := x[0]
-	for _, v := range x {
-		if v > max {
-			max = v
-		}
+	if n.right != nil {
+		rh = n.right.Height()
 	}
-	return max
+	//return height + maxInt(n.left.Height(), n.right.Height())
+	return 1 + maxInt(lh, rh)
 }
 
 // Get maximum value from Node n
@@ -135,4 +128,24 @@ func (n *Node) InOrder(prev ...int) []int {
 		rv = append(rv, n.right.InOrder()...)
 	}
 	return rv
+}
+
+// Utility max function for integers
+func maxInt(x ...int) int {
+	max := x[0]
+	for _, v := range x {
+		if v > max {
+			max = v
+		}
+	}
+	return max
+}
+func minInt(x ...int) int {
+	min := x[0]
+	for _, v := range x {
+		if v < min {
+			min = v
+		}
+	}
+	return min
 }
