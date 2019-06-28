@@ -12,21 +12,18 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println("added", cnt, "values to", root)
-
 	fmt.Println("Height", root.Height())
-
 	if l, err := root.Max(); err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println("Max", l)
 	}
-
 	if s, err := root.Min(); err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println("Min", s)
 	}
+	fmt.Println("Count", root.Count())
+	fmt.Println("InOrder", root.InOrder())
 
-	fmt.Println(root.InOrder())
-	fmt.Println(root.Count())
 }
