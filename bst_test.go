@@ -188,3 +188,45 @@ func TestInOrder(t *testing.T) {
 		})
 	}
 }
+
+func TestInSearch(t *testing.T) {
+	tests := []struct {
+		name        string
+		tree        *Node
+		input       []int
+		searchVal   int
+		wantFound   bool
+		expectError bool
+	}{
+		{name: "empty root", input: []int{}, searchVal: 0, wantFound: false},
+		{name: "empty root", input: []int{}, searchVal: 10, wantFound: false},
+		{name: "empty root", input: []int{12}, searchVal: 12, wantFound: true},
+		{name: "empty root", input: []int{5, 3, 10}, searchVal: 5, wantFound: true},
+		{name: "empty root", input: []int{5, 3, 10}, searchVal: 10, wantFound: true},
+		{name: "empty root", input: []int{5, 3, 10}, searchVal: 0, wantFound: false},
+		{name: "empty root", input: []int{5, 3, 10, 0}, searchVal: 0, wantFound: true},
+		{name: "empty root", input: []int{5, 3, 10, 0, 6}, searchVal: 6, wantFound: true},
+		{name: "empty root", input: []int{5, 3, 10, 9}, searchVal: 9, wantFound: true},
+		{name: "empty root", input: []int{5, 3, 10, 9, 11}, searchVal: 11, wantFound: true},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			test.tree = &Node{}
+			for _, v := range test.input {
+				if err := test.tree.Insert(v); err != nil {
+					t.Errorf("failed to Insert: %v: %v", v, err)
+				}
+			}
+			// Test Search
+			wasFound, err := test.tree.Search(test.searchVal)
+			if err != nil {
+				if len(test.input) > 0 {
+					t.Errorf("search %v failed on %v, wanted %v. got %v. %v", test.searchVal, test.input, test.wantFound, wasFound, err)
+				}
+			}
+			if test.wantFound != wasFound {
+				t.Errorf("search %v failed on %v, wanted %v. got %v. %v", test.searchVal, test.input, test.wantFound, wasFound, err)
+			}
+		})
+	}
+}
