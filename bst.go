@@ -139,7 +139,7 @@ func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
 // Remove node with a value
 func (n *Node) Remove(removeVal int) *Node {
 	if !n.isReady {
-		return nil
+		return n
 	}
 	if removeVal < n.val {
 		if n.left != nil {
@@ -150,10 +150,14 @@ func (n *Node) Remove(removeVal int) *Node {
 			n.right = n.right.Remove(removeVal)
 		}
 	} else {
-		if n.left == nil {
+		if n.left == nil && n.right != nil {
 			return n.right
-		} else if n.right == nil {
+		} else if n.right == nil && n.left != nil {
 			return n.left
+		} else if n.right == nil && n.left == nil {
+			n.val = 0
+			n.isReady = false
+			return n
 		}
 		min, _ := n.right.Min()
 		n.val = min
