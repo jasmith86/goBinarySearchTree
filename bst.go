@@ -128,12 +128,17 @@ func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
 			return n.left.Search(searchVal)
 		}
 	}
-	// search right -- searchVal > n.val
+	// search right -- removeVal > n.val
 	if n.right != nil {
 		return n.right.Search(searchVal)
 	}
 	//
 	return false, nil
+}
+
+// Remove node with a value
+func (n *Node) Remove(removeVal int) (removedN0de bool, rErr error) {
+	return
 }
 
 // Utility max function for integers
