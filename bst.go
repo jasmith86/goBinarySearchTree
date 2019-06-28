@@ -137,8 +137,29 @@ func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
 }
 
 // Remove node with a value
-func (n *Node) Remove(removeVal int) (removedN0de bool, rErr error) {
-	return
+func (n *Node) Remove(removeVal int) *Node {
+	if !n.isReady {
+		return nil
+	}
+	if removeVal < n.val {
+		if n.left != nil {
+			n.left = n.left.Remove(removeVal)
+		}
+	} else if removeVal > n.val {
+		if n.right != nil {
+			n.right = n.right.Remove(removeVal)
+		}
+	} else {
+		if n.left == nil {
+			return n.right
+		} else if n.right == nil {
+			return n.left
+		}
+		min, _ := n.right.Min()
+		n.val = min
+		n.right = n.right.Remove(min)
+	}
+	return n
 }
 
 // Utility max function for integers
