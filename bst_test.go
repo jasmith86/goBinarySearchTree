@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestBSTInsertSimple(t *testing.T) {
+func TestInsertSingle(t *testing.T) {
 	tests := []struct {
 		name    string
 		tree    *Node
@@ -43,14 +43,13 @@ func TestBSTInsertSimple(t *testing.T) {
 }
 
 // Check tree structure
-func TestBSTInsertCheckCorrectStructure(t *testing.T) {
+func TestInsertBulkCheckCorrectStructure(t *testing.T) {
 	tree := &Node{}
 	input := []int{10, 5, 15, 4, 6, 14, 16}
 
-	for _, v := range input {
-		if err := tree.Insert(v); err != nil {
-			t.Errorf("failed to Insert: %v", err)
-		}
+	num, err := tree.InsertBulk(input)
+	if err != nil {
+		t.Errorf("failed to Insert all %v/%v. %v", num, len(input), err)
 	}
 	location := []*Node{
 		tree,             // 10
@@ -68,7 +67,7 @@ func TestBSTInsertCheckCorrectStructure(t *testing.T) {
 	}
 }
 
-func TestBSTHeightCount(t *testing.T) {
+func TestHeightCount(t *testing.T) {
 	tests := []struct {
 		name       string
 		tree       *Node
@@ -86,11 +85,7 @@ func TestBSTHeightCount(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			for _, v := range test.input {
-				if err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to Insert: %v: %v", v, err)
-				}
-			}
+			_, _ = test.tree.InsertBulk(test.input)
 			// Test Height
 			if got := test.tree.Height(); got != test.wantHeight {
 				t.Errorf("wrong height. want %v, got %v in %v", test.wantHeight, got, test.input)
@@ -121,11 +116,7 @@ func TestMinMax(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			for _, v := range test.input {
-				if err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to Insert: %v: %v", v, err)
-				}
-			}
+			_, _ = test.tree.InsertBulk(test.input)
 			// Test Min
 			got, err := test.tree.Min()
 			gotErr := err != nil
@@ -171,11 +162,7 @@ func TestInOrder(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			for _, v := range test.input {
-				if err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to Insert: %v: %v", v, err)
-				}
-			}
+			_, _ = test.tree.InsertBulk(test.input)
 			// Test Min
 			got := test.tree.InOrder()
 			sort.Ints(test.input)
@@ -211,11 +198,7 @@ func TestInSearch(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			for _, v := range test.input {
-				if err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to Insert: %v: %v", v, err)
-				}
-			}
+			_, _ = test.tree.InsertBulk(test.input)
 			// Test Search
 			wasFound, err := test.tree.Search(test.searchVal)
 			if (err != nil) && len(test.input) > 0 {
@@ -251,11 +234,7 @@ func TestRemove(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			for _, v := range test.input {
-				if err := test.tree.Insert(v); err != nil {
-					t.Errorf("failed to Insert: %v: %v", v, err)
-				}
-			}
+			_, _ = test.tree.InsertBulk(test.input)
 			// Test Remove
 			//fmt.Println("Test tree bf remove", test.tree)
 			test.tree = test.tree.Remove(test.removeVal)
