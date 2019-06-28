@@ -6,6 +6,7 @@ func main() {
 	list := []int{1, 2, 0, -1, 0, 0, 0, 0, 0, 1000, 9999}
 
 	root := &Node{}
+	//var root *Node
 	for _, v := range list {
 		if err := root.Insert(v); err != nil {
 			fmt.Println(err, v)

@@ -6,12 +6,6 @@ import (
 
 // Tree interface TODO?
 
-//// Binary Search Tree
-//type BST struct {
-//	head  *Node
-//	count int
-//}
-
 // Node of Binary Search Tree
 type Node struct {
 	val     int
@@ -19,21 +13,6 @@ type Node struct {
 	left    *Node
 	right   *Node
 }
-
-//// Add new Node to tree. Returns number of nodes added and error
-//func (b *BST) Insert(v int) (int, error) {
-//	if b.head == nil { // Insert first/head Node
-//		b.head = &Node{val: v}
-//		b.count += 1
-//		return 1, nil
-//	}
-//	err := b.head.Insert(v) // try to Insert Node
-//	if err != nil {
-//		return 0, err
-//	}
-//	b.count += 1
-//	return 1, nil
-//}
 
 // Mark current Node as ready (n.val has been set -- not default value)
 func (n *Node) setVal(v int) {
@@ -43,7 +22,7 @@ func (n *Node) setVal(v int) {
 
 // Insert a new node starting at n.
 func (n *Node) Insert(v int) error {
-	if !n.isReady {
+	if !n.isReady { // make sure the root node is set
 		n.setVal(v)
 		return nil
 	}
@@ -134,6 +113,8 @@ func (n *Node) InOrder(prev ...int) []int {
 	}
 	return rv
 }
+
+// Search for a value
 
 // Utility max function for integers
 func maxInt(x ...int) int {

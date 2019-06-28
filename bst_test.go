@@ -185,27 +185,6 @@ func TestInOrder(t *testing.T) {
 					t.Errorf("wrong InOrder(). got %+v, want %+v", got, want)
 				}
 			}
-			//gotErr := err != nil
-			//if test.expectError != gotErr {
-			//	t.Errorf("error expectation mismatch in. got %v from %v", got, test.input)
-			//}
-			//if len(test.input) > 0 {
-			//	if want := minInt(test.input...); want != got {
-			//		t.Errorf("wrong Min(). got %v, want %v, from %v", got, want, test.input)
-			//
-			//	}
-			//}
-			//// Test Max
-			//got, err = test.tree.Max()
-			//gotErr = err != nil
-			//if test.expectError != gotErr {
-			//	t.Errorf("error expectation mismatch in Max(). got %v from %v", got, test.input)
-			//}
-			//if len(test.input) > 0 {
-			//	if want := maxInt(test.input...); want != got {
-			//		t.Errorf("wrong Max(). got %v, want %v, from %v", got, want, test.input)
-			//	}
-			//}
 		})
 	}
 }
