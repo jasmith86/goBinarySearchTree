@@ -191,12 +191,11 @@ func TestInOrder(t *testing.T) {
 
 func TestInSearch(t *testing.T) {
 	tests := []struct {
-		name        string
-		tree        *Node
-		input       []int
-		searchVal   int
-		wantFound   bool
-		expectError bool
+		name      string
+		tree      *Node
+		input     []int
+		searchVal int
+		wantFound bool
 	}{
 		{name: "empty root", input: []int{}, searchVal: 0, wantFound: false},
 		{name: "empty root", input: []int{}, searchVal: 10, wantFound: false},
@@ -219,10 +218,8 @@ func TestInSearch(t *testing.T) {
 			}
 			// Test Search
 			wasFound, err := test.tree.Search(test.searchVal)
-			if err != nil {
-				if len(test.input) > 0 {
-					t.Errorf("search %v failed on %v, wanted %v. got %v. %v", test.searchVal, test.input, test.wantFound, wasFound, err)
-				}
+			if (err != nil) && len(test.input) > 0 {
+				t.Errorf("search %v failed on %v, wanted %v. got %v. %v", test.searchVal, test.input, test.wantFound, wasFound, err)
 			}
 			if test.wantFound != wasFound {
 				t.Errorf("search %v failed on %v, wanted %v. got %v. %v", test.searchVal, test.input, test.wantFound, wasFound, err)
