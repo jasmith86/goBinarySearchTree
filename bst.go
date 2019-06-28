@@ -69,10 +69,10 @@ func (n *Node) InsertBulk(values []int) (int, error) {
 	return numInserted, nil
 }
 
-// get number of nodes from n (inclusive)
+// Get number of nodes from Node n (inclusive)
 func (n *Node) Count(c ...int) int {
 	if !n.isReady {
-		return 0
+		return 0 // count of empty tree is 0
 	}
 	count := 1
 	if n.left != nil {
@@ -84,26 +84,26 @@ func (n *Node) Count(c ...int) int {
 	return count
 }
 
-// get height downwards from Node n
+// Get height downwards from Node n (inclusive)
 func (n *Node) Height(h ...int) int {
 	if !n.isReady {
-		return 0
+		return 0 // height of empty tree is 0
 	}
-	lh, rh := 0, 0
+	leftHeight, rightHeight := 0, 0
 	if n.left != nil {
-		lh = n.left.Height()
+		leftHeight = n.left.Height()
 	}
 	if n.right != nil {
-		rh = n.right.Height()
+		rightHeight = n.right.Height()
 	}
 	//return height + maxInt(n.left.Height(), n.right.Height())
-	return 1 + maxInt(lh, rh)
+	return 1 + maxInt(leftHeight, rightHeight)
 }
 
 // Get maximum value from Node n
 func (n *Node) Max() (int, error) {
 	if !n.isReady {
-		return 0, errors.New("cannot get max of empty tree")
+		return 0, errors.New("cannot get Max() of empty tree")
 	}
 	if n.right != nil {
 		return n.right.Max()
@@ -114,7 +114,7 @@ func (n *Node) Max() (int, error) {
 // Get minimum value from Node n
 func (n *Node) Min() (int, error) {
 	if !n.isReady {
-		return 0, errors.New("cannot get min of empty tree")
+		return 0, errors.New("cannot get Min() of empty tree")
 	}
 	if n.left != nil {
 		return n.left.Min()
@@ -123,7 +123,7 @@ func (n *Node) Min() (int, error) {
 }
 
 // Walk from n in order. Returns values in ascending order.
-func (n *Node) InOrder(prev ...int) []int {
+func (n *Node) InOrder() []int { // TODO take func as arg?
 	var rv []int
 	if n.left != nil {
 		rv = append(rv, n.left.InOrder()...)
@@ -137,7 +137,7 @@ func (n *Node) InOrder(prev ...int) []int {
 	return rv
 }
 
-// Search for a value
+// Search for a value starting at Node n (inclusive)
 func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
 	if !n.isReady {
 		return false, errors.New("cannot search empty tree")
@@ -159,7 +159,7 @@ func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
 	return false, nil
 }
 
-// Remove node with a value
+// Remove node with specified value. Returns a new root node.
 func (n *Node) Remove(removeVal int) *Node {
 	if !n.isReady { // No nodes in tree
 		return n
@@ -188,7 +188,7 @@ func (n *Node) Remove(removeVal int) *Node {
 	return n
 }
 
-// Utility max function for integers
+// Utility max/min function for integers
 func maxInt(x ...int) int {
 	max := x[0]
 	for _, v := range x {
