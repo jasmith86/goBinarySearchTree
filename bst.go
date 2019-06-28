@@ -115,6 +115,26 @@ func (n *Node) InOrder(prev ...int) []int {
 }
 
 // Search for a value
+func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
+	if !n.isReady {
+		return false, errors.New("cannot search empty tree")
+	}
+	if searchVal == n.val {
+		return true, nil
+	}
+	if searchVal < n.val {
+		// search left
+		if n.left != nil {
+			return n.left.Search(searchVal)
+		}
+	}
+	// search right -- searchVal > n.val
+	if n.right != nil {
+		return n.right.Search(searchVal)
+	}
+	//
+	return false, nil
+}
 
 // Utility max function for integers
 func maxInt(x ...int) int {
