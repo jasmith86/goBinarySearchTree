@@ -7,13 +7,11 @@ func main() {
 
 	root := &Node{}
 	//var root *Node
-	for _, v := range list {
-		if err := root.Insert(v); err != nil {
-			fmt.Println(err, v)
-		} else {
-			fmt.Println("added", v)
-		}
+	cnt, err := root.InsertBulk(list)
+	if err != nil {
+		fmt.Println(err)
 	}
+	fmt.Println("added", cnt, "values")
 
 	fmt.Println("Height", root.Height())
 

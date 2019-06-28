@@ -20,6 +20,14 @@ func (n *Node) setVal(v int) {
 	n.isReady = true
 }
 
+// Mark current Node as not ready (equiv to &Node{})
+func (n *Node) unsetVal() {
+	n.val = 0
+	n.isReady = false
+	n.left = nil
+	n.right = nil
+}
+
 // Insert a new node starting at n.
 func (n *Node) Insert(v int) error {
 	if !n.isReady { // make sure the root node is set
@@ -44,6 +52,21 @@ func (n *Node) Insert(v int) error {
 		return nil
 	}
 	return n.right.Insert(v)
+}
+
+// Insert multiple nodes. If duplicate values specified, will keep inserting and return a single Error
+func (n *Node) InsertBulk(values []int) (int, error) {
+	var numInserted int
+	for _, v := range values {
+		err := n.Insert(v)
+		if err == nil {
+			numInserted += 1
+		}
+	}
+	if numInserted != len(values) {
+		return numInserted, errors.New("failed trying to Insert duplicate value(s)")
+	}
+	return numInserted, nil
 }
 
 // get number of nodes from n (inclusive)
@@ -138,10 +161,10 @@ func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
 
 // Remove node with a value
 func (n *Node) Remove(removeVal int) *Node {
-	if !n.isReady {
+	if !n.isReady { // No nodes in tree
 		return n
 	}
-	if removeVal < n.val {
+	if removeVal < n.val { // Search left
 		if n.left != nil {
 			n.left = n.left.Remove(removeVal)
 		}
@@ -155,8 +178,7 @@ func (n *Node) Remove(removeVal int) *Node {
 		} else if n.right == nil && n.left != nil {
 			return n.left
 		} else if n.right == nil && n.left == nil {
-			n.val = 0
-			n.isReady = false
+			n.unsetVal()
 			return n
 		}
 		min, _ := n.right.Min()
