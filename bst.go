@@ -1,12 +1,8 @@
+// Implements a simple Binary Search Tree. Can Insert, Remove, Search, find Min, find Max
 package main
 
-import (
-	"errors"
-)
+import "errors"
 
-// Tree interface TODO?
-
-// Node of Binary Search Tree
 type Node struct {
 	val     int
 	isReady bool
@@ -45,7 +41,7 @@ func (n *Node) Insert(v int) error {
 		}
 		return n.left.Insert(v)
 	}
-	// Go right. v must be > n.val
+	// Go right, since v must be > n.val
 	if n.right == nil { // can Insert value
 		n.right = &Node{}
 		n.right.setVal(v)
@@ -138,7 +134,7 @@ func (n *Node) InOrder() []int { // TODO take func as arg?
 }
 
 // Search for a value starting at Node n (inclusive)
-func (n *Node) Search(searchVal int) (foundNode bool, rErr error) {
+func (n *Node) Search(searchVal int) (found bool, rError error) {
 	if !n.isReady {
 		return false, errors.New("cannot search empty tree")
 	}
