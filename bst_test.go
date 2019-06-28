@@ -15,8 +15,8 @@ func TestInsertSingle(t *testing.T) {
 	}{
 		{name: "zero nodes", input: []int{}},
 		{name: "one node", input: []int{9}},
-		//{name: "add dupe node", input: []int{9, 9}, wantErr: true},
-		//{name: "three nodes", input: []int{2, 0, 3}},
+		{name: "add dupe node", input: []int{9, 9}, wantErr: true},
+		{name: "three nodes", input: []int{2, 0, 3}},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
