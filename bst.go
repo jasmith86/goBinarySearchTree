@@ -81,7 +81,7 @@ func (n *Node) Count(c ...int) int {
 }
 
 // Get height downwards from Node n (inclusive)
-func (n *Node) Height(h ...int) int {
+func (n *Node) Height() int {
 	if !n.isReady {
 		return 0 // height of empty tree is 0
 	}
@@ -92,7 +92,6 @@ func (n *Node) Height(h ...int) int {
 	if n.right != nil {
 		rightHeight = n.right.Height()
 	}
-	//return height + maxInt(n.left.Height(), n.right.Height())
 	return 1 + maxInt(leftHeight, rightHeight)
 }
 
