@@ -3,37 +3,44 @@ package main
 
 import "errors"
 
+// https://github.com/google/btree/blob/master/btree.go
+type Item interface {
+	Less(than Item) bool
+	Greater(than Item) bool
+	Equals(to Item) bool
+}
+
 type Node struct {
-	val     int
+	val     Item
 	isReady bool
 	left    *Node
 	right   *Node
 }
 
 // Mark current Node as ready (n.val has been set -- not default value)
-func (n *Node) setVal(v int) {
+func (n *Node) setVal(v Item) {
 	n.val = v
 	n.isReady = true
 }
 
 // Mark current Node as not ready (equiv to &Node{})
 func (n *Node) unsetVal() {
-	n.val = 0
+	//n.val = 0 # todo: problem??
 	n.isReady = false
 	n.left = nil
 	n.right = nil
 }
 
 // Insert a new node starting at n.
-func (n *Node) Insert(v int) error {
+func (n *Node) Insert(v Item) error {
 	if !n.isReady { // make sure the root node is set
 		n.setVal(v)
 		return nil
 	}
-	if v == n.val {
+	if v.Equals(n.val) {
 		return errors.New("failed trying to Insert duplicate value")
 	}
-	if v < n.val { // Go left
+	if v.Less(n.val) { // Go left
 		if n.left == nil { // can Insert value
 			n.left = &Node{}
 			n.left.setVal(v)
@@ -50,23 +57,23 @@ func (n *Node) Insert(v int) error {
 	return n.right.Insert(v)
 }
 
-// Insert multiple nodes. If duplicate values specified, will keep inserting and return a single Error
-func (n *Node) InsertBulk(values []int) (int, error) {
-	var numInserted int
-	for _, v := range values {
-		err := n.Insert(v)
-		if err == nil {
-			numInserted += 1
-		}
-	}
-	if numInserted != len(values) {
-		return numInserted, errors.New("failed trying to Insert duplicate value(s)")
-	}
-	return numInserted, nil
-}
+//// Insert multiple nodes. If duplicate values specified, will keep inserting and return a single Error
+//func (n *Node) insertBulk(values []Item) (int, error) { // todo Remove?
+//	var numInserted int
+//	for _, v := range values {
+//		err := n.Insert(v)
+//		if err == nil {
+//			numInserted += 1
+//		}
+//	}
+//	if numInserted != len(values) {
+//		return numInserted, errors.New("failed trying to Insert duplicate value(s)")
+//	}
+//	return numInserted, nil
+//}
 
 // Get number of nodes from Node n (inclusive)
-func (n *Node) Count(c ...int) int {
+func (n *Node) Count() int {
 	if !n.isReady {
 		return 0 // count of empty tree is 0
 	}
@@ -96,9 +103,9 @@ func (n *Node) Height() int {
 }
 
 // Get maximum value from Node n
-func (n *Node) Max() (int, error) {
+func (n *Node) Max() (Item, error) {
 	if !n.isReady {
-		return 0, errors.New("cannot get Max() of empty tree")
+		return nil, errors.New("cannot get Max() of empty tree")
 	}
 	if n.right != nil {
 		return n.right.Max()
@@ -107,9 +114,9 @@ func (n *Node) Max() (int, error) {
 }
 
 // Get minimum value from Node n
-func (n *Node) Min() (int, error) {
+func (n *Node) Min() (Item, error) {
 	if !n.isReady {
-		return 0, errors.New("cannot get Min() of empty tree")
+		return nil, errors.New("cannot get Min() of empty tree")
 	}
 	if n.left != nil {
 		return n.left.Min()
@@ -118,8 +125,8 @@ func (n *Node) Min() (int, error) {
 }
 
 // Walk from n in order. Returns values in ascending order.
-func (n *Node) InOrder() []int { // TODO take func as arg?
-	var rv []int
+func (n *Node) InOrder() []Item { // TODO take func as arg?
+	var rv []Item
 	if n.left != nil {
 		rv = append(rv, n.left.InOrder()...)
 	}
@@ -133,14 +140,14 @@ func (n *Node) InOrder() []int { // TODO take func as arg?
 }
 
 // Search for a value starting at Node n (inclusive)
-func (n *Node) Search(searchVal int) (found bool, rError error) {
+func (n *Node) Search(searchVal Item) (bool, error) {
 	if !n.isReady {
 		return false, errors.New("cannot search empty tree")
 	}
-	if searchVal == n.val {
+	if searchVal.Equals(n.val) {
 		return true, nil
 	}
-	if searchVal < n.val {
+	if searchVal.Less(n.val) {
 		// search left
 		if n.left != nil {
 			return n.left.Search(searchVal)
@@ -155,15 +162,15 @@ func (n *Node) Search(searchVal int) (found bool, rError error) {
 }
 
 // Remove node with specified value. Returns a new root node.
-func (n *Node) Remove(removeVal int) *Node {
+func (n *Node) Remove(removeVal Item) *Node {
 	if !n.isReady { // No nodes in tree
 		return n
 	}
-	if removeVal < n.val { // Search left
+	if removeVal.Less(n.val) { // Search left
 		if n.left != nil {
 			n.left = n.left.Remove(removeVal)
 		}
-	} else if removeVal > n.val {
+	} else if removeVal.Greater(n.val) {
 		if n.right != nil {
 			n.right = n.right.Remove(removeVal)
 		}
