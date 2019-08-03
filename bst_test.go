@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// Ensure items are inserted into the tree
 func TestInsertSingle(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -66,6 +67,7 @@ func TestInsertBulkCheckCorrectStructure(t *testing.T) {
 	}
 }
 
+// Make sure that we form a tree of the expected height
 func TestHeightCount(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -97,6 +99,7 @@ func TestHeightCount(t *testing.T) {
 	}
 }
 
+// Test find Min/Max functionality of the BST
 func TestMinMax(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -146,15 +149,11 @@ func TestMinMax(t *testing.T) {
 // Fulfill interface for Sort, see: https://gobyexample.com/sorting-by-functions
 type myIntSlice []MyInt
 
-func (s myIntSlice) Len() int {
-	return len(s)
-}
-func (s myIntSlice) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-func (s myIntSlice) Less(i, j int) bool {
-	return s[i] < s[j]
-}
+func (s myIntSlice) Len() int           { return len(s) }
+func (s myIntSlice) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s myIntSlice) Less(i, j int) bool { return s[i] < s[j] }
+
+// Ensure that in-order traversal works as expected
 func TestInOrder(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -175,16 +174,9 @@ func TestInOrder(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
 			_, _ = insertBulk(test.tree, test.input)
-			// Test Min
 			got := test.tree.InOrder()
-			//var want []int
-			sort.Sort(myIntSlice(test.input))
+			sort.Sort(myIntSlice(test.input)) // Use Sort to verify traversal
 			want := test.input
-			//if !reflect.DeepEqual(want, got) {
-			//	if !(len(want) == 0 && len(got) == 0) { // TODO DeepEqual on empty slices
-			//		t.Errorf("wrong InOrder(). got %+v, want %+v", got, want)
-			//	}
-			//}
 			for i := 0; i < len(want)-1; i++ {
 				if !(got[i].Equals(want[i])) {
 					t.Errorf("wrong InOrder(). got %+v, want %+v", got, want)
@@ -194,7 +186,8 @@ func TestInOrder(t *testing.T) {
 	}
 }
 
-func TestInSearch(t *testing.T) {
+// Test BST's search function
+func TestSearch(t *testing.T) {
 	tests := []struct {
 		name      string
 		tree      *Node
@@ -253,11 +246,7 @@ func TestRemove(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
 			_, _ = insertBulk(test.tree, test.input)
-			// Test Remove
-			//fmt.Println("Test tree bf remove", test.tree)
 			test.tree = test.tree.Remove(test.removeVal)
-			//fmt.Println("Test tree af remove", test.tree)
-
 			// test that only the specified node was removed
 			for _, inputVal := range test.input {
 				stillPresent, _ := test.tree.Search(inputVal)
@@ -279,7 +268,6 @@ func TestRemove(t *testing.T) {
 			// make sure the ordering is still correct
 			gotOrdered := test.tree.InOrder()
 			for i := 1; i < len(gotOrdered); i++ {
-				//fmt.Println("hi")
 				if !(gotOrdered[i-i].Less(gotOrdered[i])) {
 					t.Errorf("Remove(%v) not in ascending order %v %v %v", test.removeVal, gotOrdered, test.input, i)
 				}
