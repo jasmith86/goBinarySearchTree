@@ -1,7 +1,6 @@
 # Binary Search Tree in Go
 This a simple BST implemented in Golang. It currently implements the following methods:
 - Insert() - insert a single integer
-- InsertBulk() - insert integers from a slice
 - Remove() - remove node with specified value 
 - Search() - search the BST for a value
 - Height() - get the height of the tree
