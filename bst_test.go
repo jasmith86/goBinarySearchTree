@@ -1,25 +1,10 @@
 package main
 
 import (
-	"errors"
 	"reflect"
 	"sort"
 	"testing"
 )
-
-func (n *Node) insertBulk(values []MyInt) (int, error) { // todo Remove?
-	var numInserted int
-	for _, v := range values {
-		err := n.Insert(v)
-		if err == nil {
-			numInserted += 1
-		}
-	}
-	if numInserted != len(values) {
-		return numInserted, errors.New("failed trying to Insert duplicate value(s)")
-	}
-	return numInserted, nil
-}
 
 func TestInsertSingle(t *testing.T) {
 	tests := []struct {
@@ -62,7 +47,7 @@ func TestInsertBulkCheckCorrectStructure(t *testing.T) {
 	tree := &Node{}
 	input := []MyInt{10, 5, 15, 4, 6, 14, 16}
 
-	num, err := tree.insertBulk(input)
+	num, err := insertBulk(tree, input)
 	if err != nil {
 		t.Errorf("failed to Insert all %v/%v. %v", num, len(input), err)
 	}
@@ -100,7 +85,7 @@ func TestHeightCount(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			_, _ = test.tree.insertBulk(test.input)
+			_, _ = insertBulk(test.tree, test.input)
 			// Test Height
 			if got := test.tree.Height(); got != test.wantHeight {
 				t.Errorf("wrong height. want %v, got %v in %v", test.wantHeight, got, test.input)
@@ -131,7 +116,7 @@ func TestMinMax(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			_, _ = test.tree.insertBulk(test.input)
+			_, _ = insertBulk(test.tree, test.input)
 			// Test Min
 			got, err := test.tree.Min()
 			gotErr := err != nil
@@ -159,11 +144,23 @@ func TestMinMax(t *testing.T) {
 	}
 }
 
+// Fulfill interface for Sort, see: https://gobyexample.com/sorting-by-functions
+type myIntSlice []MyInt
+
+func (s myIntSlice) Len() int {
+	return len(s)
+}
+func (s myIntSlice) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s myIntSlice) Less(i, j int) bool {
+	return s[i] < s[j]
+}
 func TestInOrder(t *testing.T) {
 	tests := []struct {
 		name        string
 		tree        *Node
-		input       []MyInt
+		input       myIntSlice
 		expectError bool
 	}{
 		{name: "empty root", input: []MyInt{}, expectError: true},
@@ -174,13 +171,15 @@ func TestInOrder(t *testing.T) {
 		{name: "height 4 all right", input: []MyInt{1, 2, 3, 4}},
 		{name: "height 3 full", input: []MyInt{10, 8, 7, 9, 12, 11, 13}},
 	}
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			_, _ = test.tree.insertBulk(test.input)
+			_, _ = insertBulk(test.tree, test.input)
 			// Test Min
 			got := test.tree.InOrder()
-			sort.Ints(test.input)
+			//var want []int
+			sort.Sort(myIntSlice(test.input))
 			want := test.input
 			if !reflect.DeepEqual(want, got) {
 				if !(len(want) == 0 && len(got) == 0) { // TODO DeepEqual on empty slices
@@ -213,7 +212,7 @@ func TestInSearch(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			_, _ = test.tree.insertBulk(test.input)
+			_, _ = insertBulk(test.tree, test.input)
 			// Test Search
 			wasFound, err := test.tree.Search(test.searchVal)
 			if (err != nil) && len(test.input) > 0 {
@@ -249,7 +248,7 @@ func TestRemove(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.tree = &Node{}
-			_, _ = test.tree.insertBulk(test.input)
+			_, _ = insertBulk(test.tree, test.input)
 			// Test Remove
 			//fmt.Println("Test tree bf remove", test.tree)
 			test.tree = test.tree.Remove(test.removeVal)
@@ -277,7 +276,7 @@ func TestRemove(t *testing.T) {
 			gotOrdered := test.tree.InOrder()
 			for i := 1; i < len(gotOrdered); i++ {
 				//fmt.Println("hi")
-				if !(gotOrdered[i-i] < gotOrdered[i]) {
+				if !(gotOrdered[i-i].Less(gotOrdered[i])) {
 					t.Errorf("Remove(%v) not in ascending order %v %v %v", test.removeVal, gotOrdered, test.input, i)
 				}
 			}

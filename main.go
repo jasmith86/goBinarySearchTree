@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // Fulfil Item interface specified in bst.go
 type MyInt int
@@ -13,6 +16,20 @@ func (a MyInt) Greater(than Item) bool {
 }
 func (a MyInt) Equals(to Item) bool {
 	return a == to.(MyInt)
+}
+
+func insertBulk(n *Node, values []MyInt) (int, error) { // todo Remove?
+	var numInserted int
+	for _, v := range values {
+		err := n.Insert(v)
+		if err == nil {
+			numInserted += 1
+		}
+	}
+	if numInserted != len(values) {
+		return numInserted, errors.New("failed trying to Insert duplicate value(s)")
+	}
+	return numInserted, nil
 }
 
 func main() {
@@ -30,7 +47,7 @@ func main() {
 	//		cnt++
 	//	}
 	//}
-	cnt, err := root.InsertBulk(list)
+	cnt, err := insertBulk(root, list)
 	_ = err
 	fmt.Println("added", cnt, "values to", root)
 	fmt.Println("Height", root.Height())
