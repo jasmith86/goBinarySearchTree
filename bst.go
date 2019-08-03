@@ -57,21 +57,6 @@ func (n *Node) Insert(v Item) error {
 	return n.right.Insert(v)
 }
 
-//// Insert multiple nodes. If duplicate values specified, will keep inserting and return a single Error
-//func (n *Node) insertBulk(values []Item) (int, error) { // todo Remove?
-//	var numInserted int
-//	for _, v := range values {
-//		err := n.Insert(v)
-//		if err == nil {
-//			numInserted += 1
-//		}
-//	}
-//	if numInserted != len(values) {
-//		return numInserted, errors.New("failed trying to Insert duplicate value(s)")
-//	}
-//	return numInserted, nil
-//}
-
 // Get number of nodes from Node n (inclusive)
 func (n *Node) Count() int {
 	if !n.isReady {
@@ -140,12 +125,12 @@ func (n *Node) InOrder() []Item { // TODO take func as arg?
 }
 
 // Search for a value starting at Node n (inclusive)
-func (n *Node) Search(searchVal Item) (bool, error) {
+func (n *Node) Search(searchVal Item) (bool, error, *Node) {
 	if !n.isReady {
-		return false, errors.New("cannot search empty tree")
+		return false, errors.New("cannot search empty tree"), nil
 	}
 	if searchVal.Equals(n.val) {
-		return true, nil
+		return true, nil, n
 	}
 	if searchVal.Less(n.val) {
 		// search left
@@ -157,8 +142,7 @@ func (n *Node) Search(searchVal Item) (bool, error) {
 	if n.right != nil {
 		return n.right.Search(searchVal)
 	}
-	//
-	return false, nil
+	return false, nil, nil
 }
 
 // Remove node with specified value. Returns a new root node.

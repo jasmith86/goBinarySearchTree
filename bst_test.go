@@ -211,7 +211,7 @@ func TestSearch(t *testing.T) {
 			test.tree = &Node{}
 			_, _ = insertBulk(test.tree, test.input)
 			// Test Search
-			wasFound, err := test.tree.Search(test.searchVal)
+			wasFound, err, _ := test.tree.Search(test.searchVal) // todo check returned node
 			if (err != nil) && len(test.input) > 0 {
 				t.Errorf("search %v failed on %v, wanted %v. got %v. %v", test.searchVal, test.input, test.wantFound, wasFound, err)
 			}
@@ -249,7 +249,7 @@ func TestRemove(t *testing.T) {
 			test.tree = test.tree.Remove(test.removeVal)
 			// test that only the specified node was removed
 			for _, inputVal := range test.input {
-				stillPresent, _ := test.tree.Search(inputVal)
+				stillPresent, _, _ := test.tree.Search(inputVal) // TODO check returned node?
 				if stillPresent && inputVal == test.removeVal {
 					t.Errorf("Remove(%v) failed on %v. wanted %v. got stillPresent=%v", test.removeVal, test.input, test.wantSucceed, stillPresent)
 				}
@@ -277,7 +277,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-// Utility max/min function for myInt
+// Utility max/min function for mysInt
 func maxMyInt(x ...MyInt) MyInt {
 	max := x[0]
 	for _, v := range x {
