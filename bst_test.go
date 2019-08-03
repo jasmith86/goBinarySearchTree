@@ -1,7 +1,6 @@
 package main
 
 import (
-	"reflect"
 	"sort"
 	"testing"
 )
@@ -181,8 +180,13 @@ func TestInOrder(t *testing.T) {
 			//var want []int
 			sort.Sort(myIntSlice(test.input))
 			want := test.input
-			if !reflect.DeepEqual(want, got) {
-				if !(len(want) == 0 && len(got) == 0) { // TODO DeepEqual on empty slices
+			//if !reflect.DeepEqual(want, got) {
+			//	if !(len(want) == 0 && len(got) == 0) { // TODO DeepEqual on empty slices
+			//		t.Errorf("wrong InOrder(). got %+v, want %+v", got, want)
+			//	}
+			//}
+			for i := 0; i < len(want)-1; i++ {
+				if !(got[i].Equals(want[i])) {
 					t.Errorf("wrong InOrder(). got %+v, want %+v", got, want)
 				}
 			}
@@ -285,7 +289,7 @@ func TestRemove(t *testing.T) {
 	}
 }
 
-// Utility max/min function for integers
+// Utility max/min function for myInt
 func maxMyInt(x ...MyInt) MyInt {
 	max := x[0]
 	for _, v := range x {
